@@ -4,6 +4,7 @@ module QREncoder
   class PNG
     attr_reader :canvas,
       :background,
+      :foreground,
       :margin,
       :pixels_per_module,
       :points,
@@ -15,7 +16,8 @@ module QREncoder
       @points = qrcode.points
       @margin = options[:margin] || 4
       @pixels_per_module= options[:pixels_per_module] || 1
-      @background = options[:transparent] ? ChunkyPNG::Color::TRANSPARENT : ChunkyPNG::Color::WHITE
+      @background = options[:transparent] ? ChunkyPNG::Color::TRANSPARENT : options[:background] || ChunkyPNG::Color::WHITE
+      @foreground = options[:color] || ChunkyPNG::Color::BLACK
       @width = (qrcode.width + (2 * margin)) * pixels_per_module
 
       @canvas = ChunkyPNG::Image.new(width, width, background)
@@ -41,7 +43,7 @@ module QREncoder
           x = (point[0] + margin) * pixels_per_module + x_offset
           pixels_per_module.times do |y_offset|
             y = (point[1] + margin) * pixels_per_module + y_offset
-            canvas[x,y] = ChunkyPNG::Color::BLACK
+            canvas[x,y] = @foreground
           end
         end
       end
